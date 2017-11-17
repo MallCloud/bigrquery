@@ -1,5 +1,9 @@
-base_url <- "https://www.googleapis.com/bigquery/v2/"
+BIGQUERY_HOST <- Sys.getenv("BIGQUERY_HOST")
+
+base_url <- BIGQUERY_HOST
 upload_url <- "https://www.googleapis.com/upload/bigquery/v2/"
+
+token_value <- "Token "+Sys.getenv("GOOGLE_PROXY_CREDENTIALS")
 
 prepare_bq_query <- function(query) {
   api_key <- Sys.getenv("BIGRQUERY_API_KEY")
@@ -45,6 +49,7 @@ bq_get <- function(url, ..., query = NULL, token = get_access_cred()) {
     paste0(base_url, url),
     config(token = token),
     bq_ua(),
+    add_headers("Authorization", token_value),
     ...,
     query = prepare_bq_query(query)
   )
@@ -85,6 +90,7 @@ bq_delete <- function(url, ..., query = NULL, token = get_access_cred()) {
     paste0(base_url, url),
     config(token = token),
     bq_ua(),
+    add_headers("Authorization"=token_value),
     ...,
     query = prepare_bq_query(query)
   )
@@ -99,7 +105,7 @@ bq_post <- function(url, body, ..., query = NULL, token = get_access_cred()) {
     body = json,
     bq_ua(),
     config(token = token),
-    add_headers("Content-Type" = "application/json"),
+    add_headers("Content-Type" = "application/json","Authorization"=token_value),
     ...,
     query = prepare_bq_query(query)
   )
@@ -114,7 +120,7 @@ bq_put <- function(url, body, ..., query = NULL, token = get_access_cred()) {
     body = json,
     bq_ua(),
     config(token = token),
-    add_headers("Content-Type" = "application/json"),
+    add_headers("Content-Type" = "application/json","Authorization"=token_value),
     ...,
     query = prepare_bq_query(query)
   )
